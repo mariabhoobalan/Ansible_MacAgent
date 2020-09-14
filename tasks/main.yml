@@ -1,0 +1,7 @@
+---
+
+# Download the necessary templates
+- include: tmplt_download.yml
+
+# Setup Machine agent
+- include: mac_install.yml

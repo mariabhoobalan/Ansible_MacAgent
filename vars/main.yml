@@ -1,0 +1,30 @@
+#AppDynamics controller configurations
+#--------------------------------------
+var_accountname: baseball202008131839518
+var_accesskey: qrsn3nex186z
+var_controller_port: 80
+var_sim_enabled: true
+var_application_name: JCMBTest
+var_tier_name: webtier
+var_node_name: node1
+var_controller_host: "{{ var_accountname }}.saas.appdynamics.com"
+var_httphost: "https://{{ var_controller_host }}" 
+
+#Repo URL
+#-------------------
+var_repo: https://jcmbexe.s3.amazonaws.com/AppD/MacAgent
+
+#Machine Agent files and Templates
+#-----------------------------------
+var_macagent: MachineAgent-64bit-20.3.2.2520-LINUX
+
+#Machine Agent configurations
+#-----------------------------
+var_appd_path: /opt/AppD
+var_mac_path: /opt/AppD/MachineAgent
+var_files_path: ./roles/macagent
+var_macname: "{{ var_macagent }}.tar"
+var_max_metrics: 2500
+var_agent_option: Xmx512m
+var_owner:  ansadm
+var_group: ansadm

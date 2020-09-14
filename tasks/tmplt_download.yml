@@ -1,0 +1,21 @@
+---
+
+
+- name: Download Machine templates from Repo
+  block:
+   - name: Download the controller-info template
+     get_url:
+       url: "{{ var_repo }}/controller-info.xml"
+       dest: "{{ role_path }}/templates/controller-info.xml"
+
+   - name: Download the MachineAgent template
+     get_url:
+       url: "{{ var_repo }}/MachineAgent.sh"
+       dest: "{{ role_path }}/templates/MachineAgent.sh"
+
+   - name: Download the AppDynamicsMachineAgent.service
+     get_url:
+       url: "{{ var_repo }}/AppDynamicsMachineAgent.service"
+       dest: "{{ role_path }}/templates/AppDynamicsMachineAgent.service"
+  delegate_to: localhost
+  run_once: true 

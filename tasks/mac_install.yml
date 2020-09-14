@@ -1,0 +1,80 @@
+---
+#-------------------------------------------------------------------------------------------------------
+# The task performs the following activities
+#  1> Createsa directory called AppD in the host machine
+#  2> Unarchive the MachineAgent tarball. (Internally this module copies the tar file from 
+#     local to host and extracts the content
+#  3> Creates a symbolic link (removes if it exists already) called MachineAgent to the extracted folder
+#  4> Sets the AppD folder permission recursively for the required user/user group
+#  5> Replaces the controller-info.xml and MachineAgent.sh files with custom configuration values
+#  6> Register and enable the machine agent service
+#  7> Check if the machineagent service is up and running
+#------------------------------------------------------------------------------------------------------- 
+- name: Create directory AppD in the host machine
+  file:
+    path: "{{ var_appd_path }}"
+    state: directory
+
+- name: Unarchive machine agent tar file
+  unarchive:
+    src: "{{ var_repo }}/{{ var_macname }}"
+    dest: "{{ var_appd_path }}"
+    remote_src: yes
+
+- name: Remove Symbolic link MachineAgent if present
+  file:
+    path: "{{ var_mac_path }}"
+    state: absent
+
+- name: Create Symbolic Link
+  file:
+    src: "{{ var_appd_path }}/{{ var_macagent }}" 
+    dest: "{{ var_mac_path }}"
+    owner: "{{ var_owner }}"
+    group: "{{ var_group }}"
+    state: link
+
+- name: Set the permission for the directory AppD
+  file:
+    path: "{{ var_appd_path }}"
+    state: directory
+    recurse: yes
+    owner: "{{ var_owner }}"
+    group: "{{ var_group }}"
+
+- name: Update controller-info.xml with the custom values
+  template:
+    src: controller-info.xml
+    dest: "{{ var_mac_path }}/conf/controller-info.xml"
+
+- name: Update MachineAgent.sh with custom values
+  template:
+    src: MachineAgent.sh 
+    dest: "{{ var_mac_path }}/MachineAgent.sh"
+
+- name: Make sure Machine agent is executable
+  file: path="{{ var_mac_path }}/bin/machine-agent" mode=0755 
+
+- name: Create MachineAgent service
+  template:
+   src: AppDynamicsMachineAgent.service
+   dest: /etc/systemd/system/AppDynamicsMachineAgent.service
+
+- name: Enable service for auto start
+  service:
+    name: AppDynamicsMachineAgent.service
+    enabled: yes
+
+- name: Start Machine Agent service
+  service:
+    name: AppDynamicsMachineAgent.service
+    state: restarted
+
+- name: Check the status of the machine agent service
+  service_facts:
+  register: service_state
+- debug:
+    var: service_state.ansible_facts.services["AppDynamicsMachineAgent.service"].state
+
+
+

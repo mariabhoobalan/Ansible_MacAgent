@@ -1,0 +1,13 @@
+
+[Unit]
+Description=AppDynamics Machine Agent Service
+After=network.target
+
+[Service]
+ExecStart=/bin/bash -c 'nohup {{ var_mac_path }}/MachineAgent.sh start'
+ExecStop=/bin/bash -c ' {{ var_mac_path }}/MachineAgent.sh stop'
+Type=forking
+User={{ var_owner }}
+
+[Install]
+WantedBy=multi-user.target
